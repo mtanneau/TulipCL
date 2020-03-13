@@ -23,13 +23,13 @@ App for building a command-line executable of the [Tulip.jl](https://github.com/
     ```julia
     $ julia -q --project
     julia> using PackageCompiler
-    julia> create_app(".", "TulipCLCompiled", precompile_execution_file="src/snoop.jl", app_name="tulip_cl")
+    julia> create_app(".", "build", precompile_execution_file="src/snoop.jl", app_name="tulip_cl")
     [ Info: PackageCompiler: creating base system image (incremental=false)...
     [ Info: PackageCompiler: creating system image object file, this might take a while...
     [ Info: PackageCompiler: creating system image object file, this might take a while...
     julia> exit()
     ```
-    The executable will be located at `TulipCLCompiled/bin/tulip_cl`.
+    The executable will be located at `build/bin/tulip_cl`.
 
     For more information on how to build the app, see [here](https://julialang.github.io/PackageCompiler.jl/dev/apps/).
 
