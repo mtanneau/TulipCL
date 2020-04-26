@@ -1,5 +1,7 @@
 module TulipCL
 
+using Printf
+
 import Tulip
 const TLP = Tulip
 
@@ -29,6 +31,10 @@ function parse_commandline(cl_args)
             help = "Maximum number of threads."
             arg_type = Int
             default = 1
+        "--Presolve"
+            help = "Presolve level"
+            arg_type = Int
+            default = 1
         "finst"
             help = "Name of instance file. Only Free MPS format is supported."
             required = true
@@ -40,22 +46,23 @@ end
 function tulip_cl()
     parsed_args = parse_commandline(ARGS)
 
-    println("Julia version: ", VERSION)
-
     # Read model and solve
     finst = parsed_args["finst"]
 
     m = TLP.Model{Float64}()
-    println(finst)
-    t = @elapsed TLP.loadproblem!(m, finst)
-    println("Reading time (s): $t")
+    t = @elapsed TLP.load_problem!(m, finst)
+
+    println("Julia version: ", VERSION)
+    println("Problem file : ", finst)
+    @printf "Reading time : %.2fs\n\n" t
 
     # Set parameters
-    m.env.verbose = true
-    m.env.time_limit = parsed_args["TimeLimit"]
-    m.env.threads = parsed_args["Threads"]
+    m.params.OutputLevel = 1
+    m.params.TimeLimit = parsed_args["TimeLimit"]
+    m.params.Threads = parsed_args["Threads"]
+    m.params.Presolve = parsed_args["Presolve"]
 
-    println("\n$(m.name)")
+    Tulip.LinearAlgebra.BLAS.set_num_threads(m.params.Threads)
 
     TLP.optimize!(m)
 
