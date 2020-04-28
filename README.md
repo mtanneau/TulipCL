@@ -50,6 +50,7 @@ Currently, possible user options are
 | `Presolve`  | `Int`     | `1`   | Set to `0` to disable presolve, `1` to activate it |
 | `Threads`   | `Int`     | `1`   | Maximum number of threads |
 | `TimeLimit` | `Float64` | `Inf` | Time limit, in seconds |
+| `BarrierIterationsLimit` | `Int` | `100` | Maximum number of barrier iterations |
 
 For more information, run `tulip_cl --help`, or look at Tulip's [documentation](https://ds4dm.github.io/Tulip.jl/stable/) for more details on parameters.
 
@@ -65,4 +66,4 @@ $ julia -q --project
 julia> ]
 (TulipCL) pkg> add Tulip#master
 ```
-then follw the installation steps above.
+then follow the installation steps above.

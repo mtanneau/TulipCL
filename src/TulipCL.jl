@@ -27,6 +27,10 @@ function parse_commandline(cl_args)
             help = "Time limit, in seconds."
             arg_type = Float64
             default = Inf
+        "--BarrierIterationsLimit"
+            help = "Maximum number of iterations"
+            arg_type = Int
+            default = 100
         "--Threads"
             help = "Maximum number of threads."
             arg_type = Int
@@ -61,6 +65,7 @@ function tulip_cl()
     m.params.TimeLimit = parsed_args["TimeLimit"]
     m.params.Threads = parsed_args["Threads"]
     m.params.Presolve = parsed_args["Presolve"]
+    m.params.BarrierIterationsLimit = parsed_args["BarrierIterationsLimit"]
 
     Tulip.LinearAlgebra.BLAS.set_num_threads(m.params.Threads)
 
