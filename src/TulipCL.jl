@@ -8,7 +8,6 @@ const TLP = Tulip
 using ArgParse
 
 function julia_main()::Cint
-
     try
         tulip_cl()
     catch
@@ -27,10 +26,10 @@ function parse_commandline(cl_args)
             help = "Time limit, in seconds."
             arg_type = Float64
             default = Inf
-        "--BarrierIterationsLimit"
+        "--IterationsLimit"
             help = "Maximum number of iterations"
             arg_type = Int
-            default = 100
+            default = 500
         "--Threads"
             help = "Maximum number of threads."
             arg_type = Int
@@ -39,6 +38,10 @@ function parse_commandline(cl_args)
             help = "Presolve level"
             arg_type = Int
             default = 1
+        "--Method"
+            help = "Interior-point method (HSD or MPC)"
+            arg_type = String
+            default = "HSD"
         "finst"
             help = "Name of instance file. Only Free MPS format is supported."
             required = true
@@ -62,21 +65,22 @@ function tulip_cl()
 
     # Set parameters
     m.params.OutputLevel = 1
-    m.params.TimeLimit = parsed_args["TimeLimit"]
+    m.params.IPM.TimeLimit = parsed_args["TimeLimit"]
     m.params.Threads = parsed_args["Threads"]
-    m.params.Presolve = parsed_args["Presolve"]
-    m.params.BarrierIterationsLimit = parsed_args["BarrierIterationsLimit"]
+    m.params.Presolve.Level = parsed_args["Presolve"]
+    m.params.IPM.IterationsLimit = parsed_args["IterationsLimit"]
 
-    Tulip.LinearAlgebra.BLAS.set_num_threads(m.params.Threads)
+    if parsed_args["Method"] == "HSD"
+        m.params.IPM.Factory = Tulip.Factory(Tulip.HSD)
+    elseif parsed_args["Method"] == "MPC"
+        m.params.IPM.Factory = Tulip.Factory(Tulip.MPC)
+    else
+        error("Invalid value for Method: $(parsed_args["Method"]) (must be HSD or MPC)")
+    end
 
     TLP.optimize!(m)
 
     return nothing
-end
-
-# Run if called directly
-if abspath(PROGRAM_FILE) == @__FILE__
-    tulip_cl()
 end
 
 end # module
